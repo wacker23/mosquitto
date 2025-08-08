@@ -15,7 +15,7 @@ services:
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - VERSION=2.0.21
     volumes:
-      - mosquitto:/mosquitto
+      - ~/mosquitto_config:/mosquitto/config:ro
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
     networks:
@@ -38,7 +38,6 @@ services:
       traefik.tcp.services.mosquitto-tcp.loadbalancer.server.port: 1883
 
 volumes:
-  mosquitto:
   mosquitto_data:
   mosquitto_log:
 
