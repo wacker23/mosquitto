@@ -7,35 +7,26 @@ services:
     restart: always
     entrypoint: /docker-entrypoint.sh
     command: /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf
-    environment:
-      - DOWNLOAD_SHA256=7ad5e4c8ae8d2fb0ed40bf2a204de49e1f4d38d7f86baa33ba5f679b6d
-      - GPG_KEYS=ADDEEDA2D4AC84A635347D7802F8D2F3B5E7B7B7
-      - LWS_SHA256=842ac177cbcbaf9e8e10ac0ec7981384075b60ea973e5e03f3ec55c1
-      - LWS_VERSION=4.2.1
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - VERSION=2.0.21
     volumes:
       - /home/ubuntu/mosquitto_config:/mosquitto/config
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
+    ports:
+      - "1883:1883"       # Expose MQTT port directly on host
+      - "9001:9001"       # If websockets MQTT is used and exposed
     networks:
       - traefik
     labels:
       traefik.enable: "true"
 
-      # Web UI
+      # Web UI over HTTPS via Traefik (if you have a web interface for Mosquitto)
       traefik.http.routers.mosquitto.rule: Host(`mqtt.stl1.co.kr`)
       traefik.http.routers.mosquitto.entrypoints: websecure
-      traefik.http.routers.mosquitto.service: mosquitto
       traefik.http.routers.mosquitto.tls.certresolver: resolver
       traefik.http.services.mosquitto.loadbalancer.server.port: 9001
       traefik.http.services.mosquitto.loadbalancer.server.scheme: http
 
-      # MQTT TCP
-      traefik.tcp.routers.mqtt.rule: HostSNI(`*`)
-      traefik.tcp.routers.mqtt.entrypoints: mqtt
-      traefik.tcp.routers.mqtt.service: mosquitto-tcp
-      traefik.tcp.services.mosquitto-tcp.loadbalancer.server.port: 1883
+      # Removed TCP MQTT Traefik labels because Traefik does not have MQTT entrypoint configured
 
 volumes:
   mosquitto_data:
