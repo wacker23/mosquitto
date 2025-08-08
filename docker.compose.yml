@@ -15,7 +15,7 @@ services:
       - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - VERSION=2.0.21
     volumes:
-      - ~/mosquitto_config:/mosquitto/config:ro
+      - ~/mosquitto_config:/mosquitto/config
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
     networks:
